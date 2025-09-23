@@ -119,18 +119,5 @@ This repository can be used for:
 
 ---
 
-## Repository Structure
-
-```
-├── dataset/
-│   └── data.txt                  # IoT timeseries dataset
-├── modified_algorithm.py          # Python code for the modified clustering algorithm
-├── iot_stream_simulator.py        # IoT data streaming simulator
-├── requirements.txt               # Dependencies for Python environment
-└── README.md                      # Documentation
-```
-
----
-
 ## License
 This repository is released under the MIT License.  
