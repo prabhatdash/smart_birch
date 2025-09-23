@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-time Birch Clustering</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #plot {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="plot"></div>
+
+    <script>
+        let plotData = [];
+
+        function fetchData() {
+            $.getJSON('/data', function(data) {
+                plotData = data;
+                updatePlot(plotData);
+            });
+        }
+
+        function updateData() {
+            $.getJSON('/update_data', function(data) {
+                plotData = data;
+                updatePlot(plotData);
+            });
+        }
+
+        function updatePlot(data) {
+            const x = data.map(d => d.temp);
+            const y = data.map(d => d.hum);
+            const z = data.map(d => d.cluster);
+            const text = data.map(d =>
+                `Device ID: ${d.device_id}<br>Location: ${d.location}<br>Timestamp: ${d.time_stamp}<br>Temperature: ${d.temp}<br>Humidity: ${d.hum}<br>Cluster: ${d.cluster}`
+            );
+
+            const trace = {
+                x: x,
+                y: y,
+                z: z,
+                mode: 'markers',
+                marker: {
+                    size: 7,
+                    color: z,
+                    colorscale: 'Viridis',
+                    opacity: 0.8
+                },
+                text: text,
+                hoverinfo: 'text',
+                type: 'scatter3d'
+            };
+
+            const layout = {
+                title: 'Real-time Birch Clustering',
+                scene: {
+                    xaxis: { title: 'Temperature' },
+                    yaxis: { title: 'Humidity' },
+                    zaxis: { title: 'Cluster' }
+                }
+            };
+
+            Plotly.newPlot('plot', [trace], layout);
+        }
+        $(document).ready(function() {
+            fetchData();
+            setInterval(updateData, 30000); // Update data every 30 seconds
+        });
+
+    </script>
+</body>
+</html>
